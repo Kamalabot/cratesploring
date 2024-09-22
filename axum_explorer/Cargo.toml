@@ -1,5 +1,5 @@
 [workspace]
 
-members = ["hello-world"]
+members = ["hello-world", "random_gen"]
 
 resolver = "2"
