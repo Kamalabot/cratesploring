@@ -1,0 +1,19 @@
+[package]
+name = "demo_axum"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.7.6"
+# working with picture encoding
+base64 = "0.22.1"
+# for different http requests
+http = "1.1.0"
+hyper = { version = "1.4.1", features = ["full"] }
+# serializing and deserializing structs
+serde = { version = "1.0.210", features = ["derive"] }
+# working with json
+serde_json = "1.0.128"
+# async server and runtime for rust
+tokio = { version = "1.40.0", features = ["full"] }
+tower = "0.5.1"
