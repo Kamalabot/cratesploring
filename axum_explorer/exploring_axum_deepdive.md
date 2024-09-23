@@ -26,28 +26,60 @@ Most Imports:
 
 - [x] Explore the other examples from the community
   
-  - [ ] [GitHub - joelparkerhenderson/demo-rust-axum: Demo of Rust and axum web framework with Tokio, Tower, Hyper, Serde](https://github.com/joelparkerhenderson/demo-rust-axum)
+  - [x] [GitHub - joelparkerhenderson/demo-rust-axum: Demo of Rust and axum web framework with Tokio, Tower, Hyper, Serde](https://github.com/joelparkerhenderson/demo-rust-axum)
     
-    - [ ] Create a simple hello world server with closure handler
+    - [x] Create a simple hello world server with closure handler
     
-    - [ ] Create a handler that returns a String
+    - [x] Create a handler that returns a String
     
-    - [ ] Implement fallback. Need to use Uri type, and the response must impl auxm::response::IntoResponse trait
+    - [x] Implement fallback. Need to use Uri type, and the response must impl auxm::response::IntoResponse trait
     
-    - [ ]  Work on different response ranging from Html text to HTTP verbs
+    - [x] Practice on different response ranging from Html text to HTTP verbs
       
-      - [ ]  simple html text
+      - [x] simple html text
       
-      - [ ]  html file like index.html
+      - [x] html file like index.html
       
-      - [ ]  sending demo status
+      - [x] sending demo status
       
-      - [ ]  returning the uri and printing it
+      - [x] returning the uri and printing it
       
-      - [ ] 
+      - [x] fallback implementation
+      
+      - [x] updating headers & send png
+      
+      - [x] Work with get/post/put/patch/delete
+    
+    - [x] Continue working with Extractors
+      
+      - [x] Path to extract id
+      
+      - [x] Query  extract in HashMap
+      
+      - [x] Query extract in Deserialized Struct
+      
+      - [x] Query extract json body from put / post 
+    
+    - [x] Work on Json response
+      
+      - [x] Build Response with serde_json's json and Value
+    
+    - [x] Work on implementing the Book Maker Restful API
 
+- [ ] Work on writing the reqwest for Book Maker
+  
+  - Moved the book_reqwester outside of the axum_explorer workspace
+  
+  - facing issue with build hanging at mime v0.3.17:
+    
+    - realized that open_ssl was doing a lot more configuration
+    
+    - use cargo build -vv to understand that build was happening under the hood
+  
+  - [ ] writing simple get request directly over reqwest
+  
+  - [ ] spawning a client and then posting the data to server
+  
+  - [ ] 
 
-
-
-
-
+        
