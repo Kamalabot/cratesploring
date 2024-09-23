@@ -4,9 +4,7 @@ Most Used dependencies:
 
 - axum | serde | tokio | 
 
-Most Imports:
 
-- 
 
 - [x] Complete the basic exercise
   
@@ -66,7 +64,7 @@ Most Imports:
     
     - [x] Work on implementing the Book Maker Restful API
 
-- [ ] Work on writing the reqwest for Book Maker
+- [x] Work on writing the reqwest for Book Maker
   
   - Moved the book_reqwester outside of the axum_explorer workspace
   
@@ -76,10 +74,8 @@ Most Imports:
     
     - use cargo build -vv to understand that build was happening under the hood
   
-  - [ ] writing simple get request directly over reqwest
+  - [x] writing simple get request directly over reqwest
   
-  - [ ] spawning a client and then posting the data to server
-  
-  - [ ] 
+  - [x] spawning a client and then posting the data to server
 
         
