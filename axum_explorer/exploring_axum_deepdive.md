@@ -4,8 +4,6 @@ Most Used dependencies:
 
 - axum | serde | tokio | 
 
-
-
 - [x] Complete the basic exercise
   
   - [x] [Axum Documentation](https://programatik29.github.io/axum-tutorial/#/01-introduction)
@@ -76,6 +74,10 @@ Most Used dependencies:
   
   - [x] writing simple get request directly over reqwest
   
-  - [x] spawning a client and then posting the data to server
+  - [x] spawning a client and then posting the data to serve
 
-        
+- [x] Work on SQLx or Diesel with Axum. (parking it)
+  
+  - Diesel is the ORM and the Query Builder
+  
+  - Working with ORM has not much work with Candle  
