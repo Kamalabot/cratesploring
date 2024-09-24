@@ -53,8 +53,6 @@ In this case, Diesel’s `filter` is used for constructing the query, and then y
 - **Disambiguation**: You can disambiguate the `filter` method by specifying the full path for `std::iter::Iterator::filter`, or rename Diesel’s `filter` during the import using `as`.
 - **Use Both**: You can use both Diesel’s query builder `filter` and the iterator `filter` on the result set if needed, but you need to clarify which one you’re invoking in your code.
 
-
-
 The error you're seeing, `cannot find -lpq: No such file or directory`, indicates that the linker is unable to find the PostgreSQL client library `libpq`. This library is required for projects using PostgreSQL, especially with Diesel.
 
 Here’s how you can resolve it:

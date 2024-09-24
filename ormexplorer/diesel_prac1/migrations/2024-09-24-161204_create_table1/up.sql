@@ -1,0 +1,7 @@
+CREATE TABLE table1 (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR NOT NULL,
+  age INTEGER NOT NULL,
+  department TEXT NOT NULL,
+  working boolean NOT NULL DEFAULT TRUE
+)

@@ -1,5 +1,5 @@
 [workspace]
 
-members = ["diesel_start"]
+members = [ "diesel_prac1","diesel_start"]
 
 resolver="2"
