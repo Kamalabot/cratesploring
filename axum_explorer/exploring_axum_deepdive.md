@@ -81,3 +81,23 @@ Most Used dependencies:
   - Diesel is the ORM and the Query Builder
   
   - Working with ORM has not much work with Candle  
+
+### Day 2
+
+- [x] Work on Path, Query and Json extractors
+  
+  - [x] Use Hashmap to parse the Query Param
+  
+  - [x] Use Struct to parse Query Param
+  
+  - [x] Post json and process Json extractor
+  
+  - [x] Use a simple string to parse Query Param
+
+- [x] Work on Parsing the Payload & Response for OpenAI
+  
+  - [ ] Function Calling payload
+  
+  - [ ]  Function Calling response
+  
+  - [ ] 

@@ -135,6 +135,7 @@ async fn use_js() -> Json<Value> {
 // --request POST 'http://127.0.0.1:3001/dj' \
 // --header "Content-Type: application/json" \
 // --data '{"a":"b"}'
+// note after -- there is no space
 async fn post_js(Json(body): Json<Value>) -> String {
     // using axum extractor Json, and placing serde_json value
     format!("Extracting the body: {:?}", body)
