@@ -1,0 +1,10 @@
+[package]
+name = "intro1"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.89"
+candle-core = "0.7.1"
+candle-nn = "0.7.1"
+tokio = { version = "1.40.0", features = ["full"] }
