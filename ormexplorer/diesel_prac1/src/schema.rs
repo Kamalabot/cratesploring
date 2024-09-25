@@ -1,5 +1,7 @@
+// @generated automatically by Diesel CLI.
+
 diesel::table! {
-    table1 (id) {
+    employee (id) {
         id -> Int4,
         name -> Varchar,
         age -> Int4,
@@ -8,4 +10,16 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(table1,);
+diesel::table! {
+    posts (id) {
+        id -> Int4,
+        title -> Varchar,
+        body -> Text,
+        published -> Bool,
+    }
+}
+
+diesel::allow_tables_to_appear_in_same_query!(
+    employee,
+    posts,
+);
