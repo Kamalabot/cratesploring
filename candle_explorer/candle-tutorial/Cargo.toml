@@ -1,0 +1,22 @@
+[package]
+name = "candle-tutorial"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+openssl = { version = "0.10", features = ["vendored"] }
+candle-core =  "0.7.1"
+candle-nn = "0.7.1"
+serde = "1.0"
+anyhow = "1.0"
+hf-hub = "0.3.2"
+tokenizers = "0.20.0"
+serde_json = "1.0.107"
+records = "0.2.0"
+
+
+[[example]]
+name = "tensor"
+

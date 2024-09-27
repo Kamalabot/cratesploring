@@ -17,5 +17,13 @@
 - writing connection code in lib.rs by creating it under src
 
 - create bin folder under src to store CRUD applications 
+  
+  - The above step was converted to functions inside the lib.rs
+  
+  - Each function takes the conn as parameter, and operatates the table
 
-
+- create async version of the functions.
+  
+  - each function individually connects to postgres database, and awaits it
+  
+  - operates on the recieved connection

@@ -1,5 +1,5 @@
 [workspace]
 
-members =["intro1"]
+members =["intro1", "candle-tutorial", "candle-gemma", "hfhub-intro", "gemma-tokenizer"]
 
 resolver="2"
