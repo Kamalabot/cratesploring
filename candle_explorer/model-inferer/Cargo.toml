@@ -1,0 +1,19 @@
+[package]
+name = "model-inferer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+openssl= {version="0.10.66", features=["vendored"]}
+candle-core = { version = "0.7.1", features = ["cuda"] }
+candle-nn = { version = "0.7.1", features = ["cuda"] }
+candle-transformers = { version = "0.7.1", features = ["cuda"] }
+anyhow = "1.0.89"
+candle-examples = "0.7.1"
+clap = {version = "4.5.18", features = ["derive"]}
+dotenvy = "0.15.7"
+hf-hub = {version="0.3.2", features = ["tokio"]}
+records = "0.2.0"
+serde = {version = "1.0.210", features = ["derive"]}
+serde_json = "1.0.128"
+tokenizers = "0.19.0"

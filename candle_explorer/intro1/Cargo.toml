@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.89"
-candle-core = "0.7.1"
-candle-nn = "0.7.1"
+candle-core = { version = "0.7.1", features = ["cuda"]}
+candle-nn = {version="0.7.1", features = ["cuda"]}
+hf-hub = "0.3.2"
 tokio = { version = "1.40.0", features = ["full"] }
