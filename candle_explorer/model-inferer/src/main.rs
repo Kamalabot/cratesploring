@@ -128,11 +128,11 @@ fn main() -> Result<(), anyhow::Error> {
         "main".to_string(),
     ));
     // setting up the devices
-    // let device = Device::new_cuda(0)?;
-    // let dtype = DType::F32;
-    let device = Device::Cpu;
+    let device = Device::new_cuda(0)?;
+    let dtype = DType::F32;
+    // let device = Device::Cpu;
     // let dtype = DType::BF16; // unsupported for op matmul
-    let dtype = DType::F16;
+    // let dtype = DType::F16;
     // below code brings the tokenizer to local machine, load & use 
     let start = std::time::Instant::now();
     let tokenizer_filename = repo.get("tokenizer.json")?;
