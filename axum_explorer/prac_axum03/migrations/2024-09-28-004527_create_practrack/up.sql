@@ -1,0 +1,7 @@
+CREATE TABLE practrac (
+  id SERIAL PRIMARY KEY,
+  sessionname VARCHAR NOT NULL,
+  practice INTEGER NOT NULL,
+  package VARCHAR NOT NULL,
+  completed BOOLEAN NOT NULL DEFAULT TRUE
+)

@@ -1,0 +1,16 @@
+[package]
+name = "prac_axum03"
+description = "Crate is created as practice for Diesel ORM, Axum Crud API & Reqwest packages"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.7.7"
+clap = { version = "4.5.18", features = ["derive"] }
+diesel = { version = "2.2.4", features = ["postgres"] }
+dotenvy = "0.15.7"
+hyper = { version = "1.4.1", features = ["full"] }
+reqwest = { version = "0.12.7", features = ["json"] }
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = "1.0.128"
+tokio = { version = "1.40.0", features = ["full"] }
