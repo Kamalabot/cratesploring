@@ -64,7 +64,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let js_res = client.get(js_url).send().await?.text().await?;
     // the output from the server is text, so it prints without issue
     println!("Js output: {}", js_res);
-    let json_data = json!({"data":"entry"});
+    let json_data = json!({"data":"b"});
     let post_js_url = format!("{base}dj");
     let post_res = client
         .post(post_js_url)

@@ -254,8 +254,6 @@ curl -X DELETE http://localhost:3000/employees/{employee_id}
 
 This example demonstrates a basic **CRUD** implementation for managing employee data using **SurrealDB** and **Axum**. You can extend this by adding authentication, validation, or even more complex query functionality based on your project needs.
 
-
-
 Yes, **SurrealDB** supports storing vectors, and you can perform operations like embedding search when combined with other tools such as **Candle** for machine learning in Rust.
 
 ### **Overview**:
@@ -644,3 +642,109 @@ If you prefer using Docker, here's how you can run SurrealDB in a Docker contain
 - It can be integrated with Rust, JavaScript, and other languages for seamless application development.
 
 By following the above steps, you'll have SurrealDB installed, running, and ready for development on your Linux machine.
+
+The error you're encountering occurs because SurrealDB expects a specific type for the connection endpoint, and the type provided doesn't match the expected one. The `IntoEndpoint` trait in SurrealDB defines which types can be used as endpoints for different connection schemes (e.g., WebSocket `ws`, secure WebSocket `wss`).
+
+Here's how you can resolve it:
+
+### Correct Code Snippet:
+
+If you're using **WebSocket (`ws`)** as the protocol, make sure to use `surrealdb::engine::remote::ws::Ws` or `surrealdb::engine::remote::ws::Wss` for **secure WebSocket (`wss`)**.
+
+```rust
+use surrealdb::Surreal;
+use surrealdb::engine::remote::ws::{Client, Ws};
+use surrealdb::opt::auth::Root;
+
+async fn establish_connection() -> surrealdb::Result<Client> {
+    let db = Surreal::new::<Ws>("localhost:8000").await?;
+    db.signin(Root {
+        username: "root",
+        password: "password",
+    })
+    .await?;
+
+    db.use_ns("test_ns").use_db("test_db").await?;
+    Ok(db)
+}
+```
+
+Here's a basic example of an Axum server that uses shared state and implements a POST request handler. The state holds a simple counter, and the POST request increments it.
+
+### Code Example
+
+```rust
+use axum::{
+    extract::{State, Json},
+    routing::post,
+    Router,
+    http::StatusCode,
+};
+use serde::Deserialize;
+use std::sync::{Arc, Mutex};
+use tokio::sync::Mutex as AsyncMutex;
+use std::net::SocketAddr;
+
+// Shared state struct
+#[derive(Clone)]
+struct AppState {
+    counter: Arc<AsyncMutex<i32>>, // Shared state with an async Mutex for thread safety
+}
+
+// Data received from the POST request
+#[derive(Deserialize)]
+struct IncrementPayload {
+    amount: i32,
+}
+
+// POST request handler
+async fn increment_counter(
+    State(state): State<AppState>, 
+    Json(payload): Json<IncrementPayload>
+) -> (StatusCode, String) {
+    let mut counter = state.counter.lock().await; // Lock the async mutex and access the counter
+    *counter += payload.amount;
+
+    (
+        StatusCode::OK,
+        format!("Counter updated to: {}", *counter),
+    )
+}
+
+#[tokio::main]
+async fn main() {
+    // Initialize shared state with a counter value of 0
+    let state = AppState {
+        counter: Arc::new(AsyncMutex::new(0)),
+    };
+
+    // Define routes
+    let app = Router::new()
+        .route("/increment", post(increment_counter))
+        .with_state(state);
+
+    // Start the server
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    println!("Server listening on {}", addr);
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+```
+
+### Explanation:
+
+1. **State (`AppState`)**: Holds a counter inside an async `Mutex` for thread-safe access in an async environment.
+2. **Handler (`increment_counter`)**: This function receives the state and the POST payload, increments the counter, and returns a response.
+3. **Server (`axum::Server`)**: Binds to `127.0.0.1:3000` and listens for incoming POST requests at `/increment`.
+
+### Example POST Request:
+
+You can send a POST request using `curl`:
+
+```bash
+curl -X POST http://localhost:3000/increment -H "Content-Type: application/json" -d '{"amount": 5}'
+```
+
+This will increment the counter by 5 and return the updated counter value.
