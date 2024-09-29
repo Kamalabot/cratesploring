@@ -14,6 +14,5 @@ sudo cp /var/cuda-repo-ubuntu2204-12-2-local/cuda-*-keyring.gpg /usr/share/keyri
 sudo apt-get update -y
 # but this errors out, stating that nvidia driver is not accepting
 sudo apt-get -y install cuda-toolkit-12-2 # goes thru
-sudo apt-get install -y nvidia-kernel-open-535
-sudo apt-get install -y cuda-drivers-535
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
