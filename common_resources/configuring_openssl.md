@@ -30,6 +30,8 @@
   
   `$ sudo make install`
   
+  `$ sudo make uninstall`
+  
   Or without sudo,
   
   `$ make install`
