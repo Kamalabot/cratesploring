@@ -254,159 +254,108 @@ curl -X DELETE http://localhost:3000/employees/{employee_id}
 
 This example demonstrates a basic **CRUD** implementation for managing employee data using **SurrealDB** and **Axum**. You can extend this by adding authentication, validation, or even more complex query functionality based on your project needs.
 
-Yes, **SurrealDB** supports storing vectors, and you can perform operations like embedding search when combined with other tools such as **Candle** for machine learning in Rust.
+To use `candle-core`, `candle-nn`, or `tch-rs` for obtaining embeddings and then performing similarity searches with SurrealDB, we will modify the previous example to include the embedding generation using these libraries. Here’s how you can do this:
 
-### **Overview**:
+### Step 1: Update `Cargo.toml`
 
-1. **SurrealDB** can store multidimensional vectors in documents.
-2. **Candle** (a Rust-based tensor library) can be used to perform operations like generating embeddings from models.
-3. You can store these embeddings in SurrealDB and perform similarity searches or filtering operations directly from the database.
+Make sure to include the necessary dependencies in your `Cargo.toml` file:
 
-### **Steps and Examples**:
+```toml
+[dependencies]
+surrealdb = "0.3"         # Ensure you have the latest version
+candle-core = "0.5"       # Check for the latest version
+candle-nn = "0.5"         # Check for the latest version
+ndarray = "0.15"           # For handling vectors if needed
+```
 
-1. **Install SurrealDB and Candle**:
-   Add the necessary dependencies to your `Cargo.toml`:
-   
-   ```toml
-   [dependencies]
-   surrealdb = "0.9"
-   candle = "0.3"
-   candle-tch = "0.3"
-   tokio = { version = "1", features = ["full"] }
-   serde_json = "1.0"
-   ```
-   
-   `candle-tch` provides the backend for tensor computations.
+### Step 2: Generate Embeddings (not work)
 
-2. **Generating Embeddings with Candle**:
-   You can use Candle to generate vectors (e.g., from a neural network model) and store those vectors as embeddings in SurrealDB.
-   
-   Example for generating and storing embeddings:
-   
-   ```rust
-   use candle::{Tensor, Device};
-   use candle_tch::TchBackend;
-   use surrealdb::Surreal;
-   use surrealdb::engine::remote::ws::Client;
-   use surrealdb::opt::auth::Root;
-   use serde_json::json;
-   use tokio;
-   
-   #[tokio::main]
-   async fn main() -> surrealdb::Result<()> {
-       // 1. Connect to SurrealDB
-       let db = Surreal::new::<Client>("ws://localhost:8000").await?;
-   
-       // 2. Authenticate
-       db.signin(Root {
-           username: "root",
-           password: "root",
-       }).await?;
-   
-       // 3. Set the namespace and database
-       db.use_ns("test_namespace").use_db("test_db").await?;
-   
-       // 4. Generate a sample embedding using Candle
-       let device = Device::cuda_if_available(); // Use CUDA if available, else CPU
-       let embedding = Tensor::from_slice(&[0.1, 0.2, 0.3, 0.4], &device)?;
-   
-       // 5. Convert the embedding to a Vec for storage
-       let embedding_vec: Vec<f32> = embedding.to_vec1()?;
-   
-       // 6. Insert the embedding into SurrealDB
-       let response = db.create("embedding")
-           .content(json!({
-               "name": "sample_embedding",
-               "vector": embedding_vec,
-           }))
-           .await?;
-   
-       println!("Inserted embedding: {:?}", response);
-   
-       Ok(())
-   }
-   ```
-   
-   - **Candle** is used here to create an embedding (4D vector in this case).
-   - The embedding is then stored in **SurrealDB** in a document format.
+Below is an example code that generates embeddings using `candle-nn`, connects to SurrealDB, and performs similarity searches.
 
-3. **Embedding Search**:
-   SurrealDB doesn’t have native vector search (like FAISS or Milvus), but you can perform similarity searches by calculating the **Euclidean distance** or **cosine similarity** between stored vectors and a query vector, either within the database (with custom SQL) or via Rust code.
+#### Example Code
 
-4. **Performing a Similarity Search**:
-   Suppose you want to retrieve embeddings similar to a given input vector from SurrealDB. You can do this by comparing stored embeddings using cosine similarity or Euclidean distance in your Rust program.
-   
-   Example to retrieve similar embeddings:
-   
-   ```rust
-   use candle::{Tensor, Device};
-   use surrealdb::Surreal;
-   use surrealdb::engine::remote::ws::Client;
-   use surrealdb::opt::auth::Root;
-   use serde_json::Value;
-   use tokio;
-   
-   #[tokio::main]
-   async fn main() -> surrealdb::Result<()> {
-       // 1. Connect to SurrealDB
-       let db = Surreal::new::<Client>("ws://localhost:8000").await?;
-   
-       // 2. Authenticate
-       db.signin(Root {
-           username: "root",
-           password: "root",
-       }).await?;
-   
-       // 3. Set the namespace and database
-       db.use_ns("test_namespace").use_db("test_db").await?;
-   
-       // 4. Define the input query vector (from which we want to find similar vectors)
-       let query_embedding = Tensor::from_slice(&[0.1, 0.2, 0.3, 0.4], &Device::cuda_if_available())?;
-   
-       // 5. Query all stored embeddings from SurrealDB
-       let embeddings: Vec<Value> = db.select("embedding").await?;
-   
-       // 6. Iterate over embeddings and calculate similarity
-       for embed in embeddings {
-           if let Some(vector) = embed["vector"].as_array() {
-               // Convert the JSON array to a Rust Vec<f32>
-               let stored_vec: Vec<f32> = vector.iter().map(|v| v.as_f64().unwrap() as f32).collect();
-               let stored_tensor = Tensor::from_slice(&stored_vec, &Device::cuda_if_available())?;
-   
-               // Calculate Euclidean distance or cosine similarity
-               let similarity = cosine_similarity(&query_embedding, &stored_tensor)?;
-               println!("Similarity with {:?}: {}", embed["name"], similarity);
-           }
-       }
-   
-       Ok(())
-   }
-   
-   fn cosine_similarity(a: &Tensor, b: &Tensor) -> candle::Result<f32> {
-       let dot_product = a.dot(b)?;
-       let norm_a = a.norm()?;
-       let norm_b = b.norm()?;
-       let similarity = dot_product.to_scalar::<f32>()? / (norm_a * norm_b).to_scalar::<f32>()?;
-       Ok(similarity)
-   }
-   ```
-   
-   - This code retrieves all stored embeddings from SurrealDB and calculates cosine similarity with the query embedding.
-   - The function `cosine_similarity` compares the embeddings to find the closest match.
+```rust
+use surrealdb::{Surreal, Result};
+use candle::{Tensor, Device};
+use candle_nn::{Module, Linear};
+use ndarray::{Array1};
 
-### **SurrealDB and Embedding Search in Rust**:
+#[tokio::main]
+async fn main() -> Result<()> {
+    // Connect to SurrealDB
+    let db = Surreal::connect("http://localhost:8000").await?;
+    db.signin("user", "password").await?;
+    db.use_database("my_database").await?;
 
-In this example, the embeddings generated by **Candle** are stored in **SurrealDB**, and a simple similarity search is performed using **Rust**. 
+    // Create a simple model for embeddings
+    let model = Linear::new(3, 3, Default::default()); // Example: 3 inputs to 3 outputs
 
-In real-world use cases:
+    // Example input data (replace with your actual input)
+    let input_data = Tensor::from_ndarray(&Array1::from(vec![1.0, 2.0, 3.0]).into_dyn());
 
-- You can scale the embedding search using custom logic.
-- For more advanced features (like approximate nearest neighbor searches), you might need specialized vector databases, but for smaller-scale systems, this solution works.
+    // Forward pass to get embeddings
+    let embedding: Tensor = model.forward(&input_data).unwrap();
 
-### **Conclusion**:
+    // Convert tensor to Vec<f32>
+    let vector: Vec<f32> = embedding.view().to_vec();
 
-- **SurrealDB** supports storing vectors and embeddings, and you can use **Candle** in Rust to generate these vectors.
-- You can perform similarity search operations like cosine similarity between stored embeddings.
+    // Insert embedding into SurrealDB
+    db.create("embeddings")
+        .content(vec![("vector", vector)])
+        .await?;
+
+    // Example query vector for similarity search
+    let query_vector = Tensor::from_ndarray(&Array1::from(vec![2.0, 3.0, 4.0]).into_dyn());
+
+    // Find similar vectors
+    let similar = find_similar_vectors(&db, query_vector).await?;
+
+    for vector in similar {
+        println!("Similar vector: {:?}", vector);
+    }
+
+    Ok(())
+}
+
+async fn find_similar_vectors(db: &Surreal, query_vector: Tensor) -> Result<Vec<Vec<f32>>> {
+    let results: Vec<(Vec<f32>,)> = db.select("embeddings").await?;
+    let mut similar_vectors = Vec::new();
+
+    for (vector,) in results {
+        let emb_vector = Tensor::from_ndarray(&Array1::from(vector).into_dyn());
+
+        // Calculate cosine similarity
+        let similarity = cosine_similarity(&query_vector, &emb_vector);
+        similar_vectors.push((vector, similarity));
+    }
+
+    // Sort by similarity (descending)
+    similar_vectors.sort_by(|(_, sim_a), (_, sim_b)| sim_b.partial_cmp(sim_a).unwrap());
+
+    // Return only the vectors sorted by similarity
+    Ok(similar_vectors.iter().map(|(vec, _)| vec.clone()).collect())
+}
+
+fn cosine_similarity(a: &Tensor, b: &Tensor) -> f32 {
+    let dot_product = a.dot(b);
+    let norm_a = a.norm_l2();
+    let norm_b = b.norm_l2();
+    dot_product / (norm_a * norm_b)
+}
+```
+
+### Explanation
+
+1. **Model Creation**: A simple linear model is created using `candle-nn` to generate embeddings from input data.
+2. **Embedding Generation**: The model's forward method is called with input data to generate embeddings.
+3. **Database Connection**: Connects to SurrealDB, and embeddings are inserted into the database.
+4. **Similarity Search**: For a query vector, the code retrieves stored vectors, calculates cosine similarity, and returns similar vectors sorted by similarity.
+
+### Summary
+
+- Ensure you have `candle-core`, `candle-nn`, and `surrealdb` set up in your project.
+- Use a simple neural network to generate embeddings and insert them into SurrealDB.
+- Implement a similarity search based on cosine similarity between the query vector and stored vectors.
 
 Here’s how to **install SurrealDB** on Linux, start interacting with it, and use examples to get you going with the database. I’ll cover installation steps, starting the database, and performing basic operations like creating, querying, updating, and deleting data.
 
