@@ -23,6 +23,7 @@ pub struct Employee {
 }
 #[tokio::main]
 async fn main() {
+    let start = std::time::Instant::now();
     let db = Surreal::new::<Ws>("127.0.0.1:8000").await.unwrap();
     db.signin(Root {
         username: "root",
@@ -37,4 +38,5 @@ async fn main() {
         "Extracted employees: {}",
         serde_json::to_string(&emp).unwrap()
     );
+    println!("time elapsed: {:?}", start.elapsed());
 }
