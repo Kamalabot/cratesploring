@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 axum = "0.7.7"
+clap = { version = "4.5.18", features = ["derive"] }
 dotenv = "0.15.0"
 hyper = { version = "1.4.1", features = ["server"] }
 serde = { version = "1.0.210", features = ["derive"] }
