@@ -1,5 +1,5 @@
 [workspace]
 
-members = [ "diesel_prac1","diesel_start", "surreal_dive0", "surreal_dive1"]
+members = [ "diesel_prac1","diesel_start", "surreal_dive0", "surreal_dive1", "vector_embed"]
 
 resolver="2"
