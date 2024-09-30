@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-kalosm = { version = "0.3.2", features = ["full"] }
+dotenvy = "0.15.7"
+kalosm = { version = "0.3.2", features = ["cuda", "full"], git = "https://github.com/floneum/floneum" }
 tokio = { version = "1.40.0", features = ["full"] }
