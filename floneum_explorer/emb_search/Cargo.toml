@@ -1,5 +1,5 @@
 [package]
-name = "next-gen-ai"
+name = "emb_search"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,8 +9,8 @@ edition = "2021"
 # full = ["kalosm", "tokio"]
 
 [dependencies]
-openssl = {version="0.10.66", features=["vendored"]}
 dotenvy = "0.15.7"
+openssl = {version="0.10.66", features=["vendored"]}
 kalosm = { version = "0.3.2", features = ["full"] }
 # kalosm = { version = "0.3.2", features = ["cuda", "full"], git = "https://github.com/floneum/floneum" }
 # kalosm = { version = "0.3.2",optional = true, git = "https://github.com/floneum/floneum" }

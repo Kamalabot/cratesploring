@@ -1,5 +1,5 @@
 [workspace]
 
-members = ["next-gen-ai"]
+members = [ "emb_search","next-gen-ai", "structured"]
 
 resolver = "2"

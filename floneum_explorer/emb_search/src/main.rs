@@ -1,8 +1,11 @@
-#[allow(warnings)]
-#[allow(unused_imports)]
+#![allow(warnings)]
+#![allow(unused_imports)]
+
+use dotenvy::dotenv;
 use kalosm::language::*;
+use kalosm::surrealdb::{engine::local::RocksDb, Surreal};
 use std::error::Error;
-use surrealdb::{engine::local::RocksDb, Surreal};
+use std::path::PathBuf;
 
 async fn extract_docs() -> Result<String, Box<dyn Error>> {
     // Read an RSS stream
