@@ -12,8 +12,7 @@ If you're unable to locate the cuDNN libraries on your system, it likely means c
   sudo apt-get -y install cudnn
   sudo apt-get -y install cudnn-cuda-12
   ```
-  
-  
+
 - Select the appropriate version (typically cuDNN for CUDA) and download the tar file for your system.
 
 ### 2. **Install cuDNN**:
@@ -50,7 +49,7 @@ ls /usr/lib/x86-64-linux-gnu/libcudnn*
 
 ```bash
 export CUDNN_LIB=/usr/local/cuda/lib64
-export CUDNN_LIB=
+export CUDNN_LIB=/usr/lib/x86-64-linux-gnu
 ```
 
    Add it to your shell configuration file for persistence:
