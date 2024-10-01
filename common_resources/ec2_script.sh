@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo apt update -y && sudo apt upgrade -y
-sudo apt install -y build-essential 
+sudo apt install -y build-essential pkg-config 
 sudo apt install - y unzip npm python3-pip fontconfig python3.12-venv xclip xsel
 sudo apt install -y openssl libssl-dev libavformat-dev libavfilter-dev libavdevice-dev ffmpeg tesseract-ocr libtesseract-dev libasound2-dev cmake libxcb1-dev
 sudo apt install -y libclang-dev librocksdb-dev awscli python3-pip
