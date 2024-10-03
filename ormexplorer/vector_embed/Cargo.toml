@@ -4,14 +4,24 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# Takes care of the error handling
 anyhow = "1.0.89"
+# candle-core provides the Tensor Struct object
 candle-core = "0.7.2"
+# candle-nn and candle-transformers provide the Model, Varbuilders & configs 
 candle-nn = "0.7.2"
 candle-transformers = "0.7.2"
+# hf-hub crate provides the instance to download the model from Huggingface
 hf-hub = "0.3.2"
+# Important datastructure in ML, the N-dimensional Array...
 ndarray = "0.16.1"
+# Serialisation + Deserialisation of Rust Native objects (SerDE)
 serde = { version = "1.0.210", features = ["derive"] }
+# Serde of Json ... Very useful crate
 serde_json = "1.0.128"
+# The star of the DEMO... surrealDB
 surrealdb = "2.0.2"
+# Supports the Neural Net models
 tokenizers = "0.20.0"
+# support the API calls, and connecting with Servers
 tokio = { version = "1.40.0", features = ["full"] }

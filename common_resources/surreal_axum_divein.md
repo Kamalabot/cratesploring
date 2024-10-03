@@ -697,3 +697,91 @@ curl -X POST http://localhost:3000/increment -H "Content-Type: application/json"
 ```
 
 This will increment the counter by 5 and return the updated counter value.
+
+A **multi-model database** is a type of database that supports multiple data models within a single, unified platform. This allows for the storage, querying, and management of different types of data (structured, semi-structured, and unstructured) using various paradigms without needing separate systems. Examples of data models typically supported include:
+
+1. **Relational (SQL)** – for structured data organized in tables with rows and columns.
+2. **Document (NoSQL)** – for semi-structured data stored as JSON, BSON, or XML documents.
+3. **Key-Value** – for simple key-value pair data storage, often used for caching.
+4. **Graph** – for highly connected data, represented as nodes and relationships (edges).
+5. **Column-family** – for sparse data arranged in columns (e.g., in Cassandra or HBase).
+6. **Time-series** – optimized for handling time-stamped data.
+7. **Object-Oriented** – storing data as objects, similar to the object-oriented programming model.
+
+### Benefits of Multi-Model Databases:
+
+- **Flexibility**: You can store and query different types of data using the most appropriate model.
+- **Reduced Complexity**: Instead of managing multiple databases for different data types, you only need to manage one.
+- **Cost Efficiency**: A single platform reduces infrastructure and maintenance costs.
+
+SurrealDB, for example, is a multi-model database that supports SQL-like queries and handles structured, document, graph, and key-value data.
+
+Here are basic CRUD (Create, Read, Update, Delete) operations for SurrealDB using an employee data example.
+
+### 1. **Create** (Insert a new employee)
+
+```sql
+CREATE employee SET
+    name = 'John Doe',
+    position = 'Software Engineer',
+    department = 'Engineering',
+    salary = 70000;
+```
+
+### 2. **Read** (Query employee data)
+
+- **Retrieve all employees**
+  
+  ```sql
+  SELECT * FROM employee;
+  ```
+
+- **Retrieve a specific employee by ID**
+  
+  ```sql
+  SELECT * FROM employee WHERE id = employee:<employee_id>;
+  ```
+
+- **Retrieve employees from a specific department**
+  
+  ```sql
+  SELECT * FROM employee WHERE department = 'Engineering';
+  ```
+
+### 3. **Update** (Modify employee details)
+
+- **Update salary for a specific employee**
+  
+  ```sql
+  UPDATE employee:<employee_id> SET salary = 75000;
+  ```
+
+- **Update department for multiple employees**
+  
+  ```sql
+  UPDATE employee SET department = 'HR' WHERE department = 'Engineering';
+  ```
+
+### 4. **Delete** (Remove employee data)
+
+- **Delete a specific employee by ID**
+  
+  ```sql
+  DELETE employee:<employee_id>;
+  ```
+
+- **Delete all employees**
+  
+  ```sql
+  DELETE employee;
+  ```
+
+This example covers basic operations for managing an `employee` table in SurrealDB. Adjust field names and conditions as needed.
+
+To list all the tables present in a SurrealDB database, use the following query:
+
+```sql
+INFO FOR DB;
+```
+
+This command will display metadata about the current database, including the list of tables.

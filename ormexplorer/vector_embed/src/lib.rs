@@ -1,5 +1,7 @@
 #![allow(warnings)]
-
+// the following function is already explained
+// in the other video introducing embedding models
+// so here will just go through the overview...
 // We see the BertModel & its rust native config is imported
 use candle_transformers::models::bert::{BertModel, Config, HiddenAct, DTYPE};
 
@@ -12,7 +14,8 @@ use candle_nn::VarBuilder;
 use hf_hub::{api::sync::Api, Repo, RepoType};
 // tokenizer to split the sentence & encode it to numbers
 use tokenizers::{PaddingParams, Tokenizer};
-
+// below build_model_and_tokenizer function pulls the
+// model, and loads into rust execution environment...
 pub fn build_model_and_tokenizer() -> Result<(BertModel, Tokenizer)> {
     // setting the device
     let device = Device::Cpu;
@@ -81,9 +84,9 @@ pub fn embed_prompt(prompt: &str) -> Result<Tensor> {
     println!("Took {:?}", start.elapsed());
     Ok(ys)
     // The code walkthrough of part 1 is done...
+    // The embedding vectors are returned...
 }
 
 pub fn normalize_l2(v: &Tensor) -> Result<Tensor> {
     Ok(v.broadcast_div(&v.sqr()?.sum_keepdim(1)?.sqrt()?)?)
 }
-
