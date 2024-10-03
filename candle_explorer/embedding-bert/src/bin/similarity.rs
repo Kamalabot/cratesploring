@@ -167,17 +167,21 @@ fn main() -> Result<()> {
     println!("generated embeddings {:?}", embeddings.shape());
     // as we see, the sentences are now vector of dim 384
     println!("Time elapsed in generating embedding {:?}", start.elapsed());
-
-    // Apply some avg-pooling by taking the mean embedding value for all tokens (including padding)
+    // Get the dimensions of the embeddings: number of sentences, tokens, and hidden size.
+    // _n_sentence: number of sentences, n_tokens: number of tokens, _hidden_size: hidden size of embeddings
     let (_n_sentence, n_tokens, _hidden_size) = embeddings.dims3()?;
-    // starting to calculate the distances between embeddings of the sentences
+
+    // Apply average pooling by summing the token embeddings and dividing by the number of tokens.
+    // This produces a single embedding for each sentence (sentence-level embeddings).
     let embeddings = (embeddings.sum(1)? / (n_tokens as f64))?;
-    // normalize_embeddings to avoid -ve or outliers numbers
+
+    // If normalization is enabled, normalize the embeddings using L2 norm to avoid negative or extreme values.
     let embeddings = if args.normalize_embeddings {
-        normalize_l2(&embeddings)?
+        normalize_l2(&embeddings)? // Normalize embeddings to have unit length (L2 normalization)
     } else {
-        embeddings
+        embeddings // Skip normalization if not requested
     };
+
     println!("pooled embeddings {:?}", embeddings.shape());
     // similarities are stored as vectors
     let mut similarities = vec![];
@@ -215,5 +219,6 @@ fn main() -> Result<()> {
 }
 
 pub fn normalize_l2(v: &Tensor) -> Result<Tensor> {
+    // Divide each embedding vector by its L2 norm (square root of the sum of squared values).
     Ok(v.broadcast_div(&v.sqr()?.sum_keepdim(1)?.sqrt()?)?)
 }
