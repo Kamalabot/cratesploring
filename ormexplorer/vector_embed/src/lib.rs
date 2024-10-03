@@ -1,94 +1,89 @@
-#![allow(unused_imports)]
 #![allow(warnings)]
 
-use anyhow::{Error as E, Ok, Result};
+// We see the BertModel & its rust native config is imported
+use candle_transformers::models::bert::{BertModel, Config, HiddenAct, DTYPE};
 
-use candle_core::{DType, Device, Tensor};
+use anyhow::{Error as E, Ok, Result};
+// Candle_core and candle_nn crates are used for building the model
+use candle_core::{Device, Tensor};
 use candle_nn::VarBuilder;
-use candle_transformers::models::bert::{BertModel, Config};
+// clap is the command line parser, we are deriving the Parser from it
+// hf_hub api provides the interface to download the models
+use hf_hub::{api::sync::Api, Repo, RepoType};
+// tokenizer to split the sentence & encode it to numbers
 use tokenizers::{PaddingParams, Tokenizer};
 
-pub struct Model {
-    bert: BertModel,
-    tokenizer: Tokenizer,
+pub fn build_model_and_tokenizer() -> Result<(BertModel, Tokenizer)> {
+    // setting the device
+    let device = Device::Cpu;
+    // currently this function supports only BertModel arch based embedding models
+    let default_model = "sentence-transformers/all-MiniLM-L6-v2".to_string();
+    let default_revision = "refs/pr/21".to_string();
+
+    // Below the repo instances are creaated on the model_id provided
+    let repo = Repo::with_revision(default_model, RepoType::Model, default_revision);
+    // following lines download the files
+    let (config_filename, tokenizer_filename, weights_filename) = {
+        let api = Api::new()?;
+        let api = api.repo(repo);
+        // download config.json
+        let config = api.get("config.json")?;
+        // get tokenizer.json
+        let tokenizer = api.get("tokenizer.json")?;
+        // get the actual model bin / safetensors file
+        let weights = api.get("model.safetensors")?;
+        (config, tokenizer, weights)
+    };
+    // Here the model building starts inside rust
+    let config = std::fs::read_to_string(config_filename)?;
+    let mut config: Config = serde_json::from_str(&config)?;
+    // tokenizer is built
+    let tokenizer = Tokenizer::from_file(tokenizer_filename).map_err(E::msg)?;
+    // model is built with the config.json and the downloaded weights
+    // config.json contains the necessary settings, that will intialize the Bert Model
+    // inside rust.. Using the above import.
+    let vb = unsafe { VarBuilder::from_mmaped_safetensors(&[weights_filename], DTYPE, &device)? };
+    // the activation method in the embedding is modified below
+    config.hidden_act = HiddenAct::GeluApproximate;
+    let model = BertModel::load(vb, &config)?;
+    Ok((model, tokenizer))
+    // model and tokenizers are returned
+}
+// The main function starts here
+pub fn embed_prompt(prompt: &str) -> Result<Tensor> {
+    // timing the execution using start::Instant
+    let start = std::time::Instant::now();
+    // calling the build_model_and_tokenizer function and getting the model & tokenizer
+    let (model, mut tokenizer) = build_model_and_tokenizer()?;
+    // setting the device on which the model is loaded
+    let device = &model.device;
+    // In this example the model is loaded, and embedding is generated very fast
+    // We will see the RAM usage next, As we saw how ram got used and model got released
+    // Tokenizer is setup
+    let tokenizer = tokenizer
+        .with_padding(None)
+        .with_truncation(None)
+        .map_err(E::msg)?;
+    // The prompt is tokenized below...
+    let tokens = tokenizer
+        .encode(prompt, true)
+        .map_err(E::msg)?
+        .get_ids()
+        .to_vec();
+    // token ids are made ready for embedding
+    let token_ids = Tensor::new(&tokens[..], device)?.unsqueeze(0)?;
+    let token_type_ids = token_ids.zeros_like()?;
+    println!("Loaded and encoded {:?}", start.elapsed());
+    // below the embedding process is done using the forward function
+    let start = std::time::Instant::now();
+    let ys = model.forward(&token_ids, &token_type_ids, None)?;
+    println!("{ys}");
+    println!("Took {:?}", start.elapsed());
+    Ok(ys)
+    // The code walkthrough of part 1 is done...
 }
 
-#[derive(serde::Deserialize, serde::Serialize)]
-pub struct Params {
-    sentences: Vec<String>,
-    normalize_embeddings: bool,
+pub fn normalize_l2(v: &Tensor) -> Result<Tensor> {
+    Ok(v.broadcast_div(&v.sqr()?.sum_keepdim(1)?.sqrt()?)?)
 }
 
-#[derive(serde::Deserialize, serde::Serialize)]
-pub struct Embeddings {
-    data: Vec<Vec<f32>>
-}
-
-impl Model {
-    pub fn load(weights: Vec<u8>, tokenizer: Vec<u8>, config: Vec<u8>) -> Result<Model> {
-        let device = Device::Cpu;
-        let vb = VarBuilder::from_buffered_safetensors(weights, DType::F32, &device)?;
-        let config: Config = serde_json::from_slice(&config)?;
-        let tokenizer = Tokenizer::from_bytes(&tokenizer).map_err(E::msg)?;
-        let bert = BertModel::load(vb, &config)?;
-        Ok( Self{ bert, tokenizer } )
-    }
-    
-    pub fn get_embeddings(&mut self, input: Params) -> Result<Embeddings> {
-        let sentences = input.sentences;
-        let normalize_embeddings = input.normalize_embeddings;
-
-        let device = &Device::Cpu;
-        if let Some(pp) = self.tokenizer.get_padding_mut() {
-            pp.strategy = tokenizers::PaddingStrategy::BatchLongest
-        } else {
-            let pp = PaddingParams {
-                strategy: tokenizers::PaddingStrategy::BatchLongest,
-                ..Default::default()
-            };
-            self.tokenizer.with_padding(Some(pp));
-        }
-        let tokens = self
-            .tokenizer
-            .encode_batch(sentences.to_vec(), true)
-            .map_err(E::msg)?;
-
-        let token_ids: Vec<Tensor> = tokens
-            .iter()
-            .map(|tokens| {
-                let tokens = tokens.get_ids().to_vec();
-                Tensor::new(tokens.as_slice(), device)
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-
-        let attention_mask: Vec<Tensor> = tokens
-            .iter()
-            .map(|tokens| {
-                let tokens = tokens.get_attention_mask().to_vec();
-                Tensor::new(tokens.as_slice(), device)
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-
-        let token_ids = Tensor::stack(&token_ids, 0)?;
-        let attention_mask = Tensor::stack(&attention_mask, 0)?;
-        let token_type_ids = token_ids.zeros_like()?;
-
-        println!("running inference on batch {:?}", token_ids.shape());
-        let embeddings = self
-            .bert
-            .forward(&token_ids, &token_type_ids, Some(&attention_mask))?;
-        println!("generated embeddings {:?}", embeddings.shape());
-        // Apply some avg-pooling by taking the mean embedding value for all tokens (including padding)
-        let (_n_sentence, n_tokens, _hidden_size) = embeddings.dims3()?;
-        let embeddings = (embeddings.sum(1)? / (n_tokens as f64))?;
-        let embeddings = if normalize_embeddings {
-            embeddings.broadcast_div(&embeddings.sqr()?.sum_keepdim(1)?.sqrt()?)?
-        } else {
-            embeddings
-        };
-        let embeddings_data = embeddings.to_vec2()?;
-        Ok(Embeddings {
-            data: embeddings_data,
-        })
-    }
-}
