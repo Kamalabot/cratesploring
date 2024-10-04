@@ -1,0 +1,4 @@
+#V2
+INFO FOR DB;
+select * from inmem;
+cls

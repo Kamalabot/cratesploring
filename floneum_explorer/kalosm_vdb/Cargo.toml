@@ -1,0 +1,12 @@
+[package]
+name = "kalosm_vdb"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+full = "0.3.0"
+kalosm = "0.3.2"
+kalosm-language = "0.3.3"
+kalosm-language-model = "0.3.3"
+tokio = "1.40.0"
+# the above imports work for the kalosm_vdb pjt
