@@ -1,0 +1,18 @@
+[package]
+name = "doc-table-divein"
+version = "0.1.0"
+edition = "2021"
+
+# [features]
+# default = []
+# cuda = ["kalosm"]
+# full = ["kalosm", "tokio"]
+
+[dependencies]
+dotenvy = "0.15.7"
+openssl = {version="0.10.66", features=["vendored"]}
+kalosm =  {version="0.3.2", features = ["surrealdb", "kalosm-language", "language"]}
+kalosm-language = "0.3.3"
+kalosm-language-model = "0.3.3"
+serde = { version = "1.0.210", features = ["derive"]}
+tokio = { version = "1.40.0", features = ["full"] }

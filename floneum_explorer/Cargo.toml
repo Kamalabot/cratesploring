@@ -1,5 +1,5 @@
 [workspace]
 
-members = [ "emb_search", "kalosm_vdb","next-gen-ai", "structured"]
+members = [ "doc-table-divein", "emb_search", "kalosm_vdb","next-gen-ai", "structured"]
 
 resolver = "2"
