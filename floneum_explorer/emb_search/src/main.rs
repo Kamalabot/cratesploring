@@ -60,12 +60,16 @@ async fn main() {
         .await
         .unwrap();
     println!("Got the table created");
+    let start = std::time::Instant::now();
     // Add documents to the database
     document_table
         .add_context(DocumentFolder::new("./documents").unwrap())
         .await
         .unwrap();
-    println!("Adding the document folder");
+    println!(
+        "completed adding document to DB in {} secs",
+        start.elapsed()
+    );
 
     loop {
         // Get the user's question
