@@ -1,5 +1,7 @@
 #![allow(warnings)]
 
+use std::any::Any;
+
 use kalosm::language::*;
 use kalosm::surrealdb::{engine::local::RocksDb, Surreal};
 use kalosm_language::prelude::*;
@@ -38,16 +40,44 @@ async fn main() {
         println!("Retrieved the text from urls");
         // here the context is added into the table
         let start = std::time::Instant::now();
+        println!("The number of docs being added: {:?}", &context.len());
+        println!("Enumerating the context");
+
         doc_table.add_context(context).await.unwrap();
         println!(
             "Time elapsed in adding context to embedding db {:?}",
             start.elapsed()
         );
+        println!(
+            "Vector DB typeID: {:?}",
+            &doc_table.table().vector_db().type_id()
+        );
     }
-    // below the user query starts
-    let user_question = prompt_input("QUery: ").unwrap();
-
-    let nearest5 = doc_table.select_nearest(user_question, 2).await.unwrap();
-
-    println!("{:?}", nearest5);
+    loop {
+        // below the user query starts
+        let user_question = prompt_input("QUery: ").unwrap();
+        let input = user_question.trim();
+        if input == "all" {
+            let get_all: Vec<Document> = doc_table.select_all().await.unwrap();
+            println!("There are {} docs", get_all.len());
+            for (idx, docall) in get_all.iter().enumerate() {
+                println!("Doc: {idx}");
+                println!("Doc body: {}", docall.body());
+            }
+        }
+        let nearest2 = doc_table.select_nearest(user_question, 2).await.unwrap();
+        for (idx, doc) in nearest2.iter().enumerate() {
+            println!("Result {idx} details: ");
+            println!("*****");
+            println!("embedding id: {:?}", doc.id);
+            println!("embedding id: {}", doc.record_id.to_string());
+            println!(
+                "language of document: {}",
+                doc.record.language().unwrap().to_string()
+            );
+            println!("How far from query: {}", doc.distance);
+            println!("document body: {}", doc.text());
+        }
+        println!("Use Ctrl+D to quit...");
+    }
 }

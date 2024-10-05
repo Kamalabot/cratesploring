@@ -31,8 +31,11 @@ async fn main() {
 
     if let [closest] = closest.as_slice() {
         let dist = closest.distance;
+        let vecid = closest.value;
         let text = embedding_id_to_sentence.get(&closest.value).unwrap();
+        let embed = db.get_embedding(closest.value).unwrap().to_vec();
         println!("Distance:{dist}");
+        println!("Embeddings: {:?}", embed);
         println!("Closest: {text}");
     }
 }
