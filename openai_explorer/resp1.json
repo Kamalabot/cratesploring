@@ -1,0 +1,21 @@
+{
+  "final_answer": "The Fibonacci series can be generated using either an iterative or recursive approach. Here's a simple iterative method to generate the first n Fibonacci numbers:",
+  "steps": [
+    {
+      "explanation": "Initialize the first two Fibonacci numbers: F(0) = 0 and F(1) = 1.",
+      "output": "F(0) = 0, F(1) = 1"
+    },
+    {
+      "explanation": "Create a list to store the Fibonacci series starting with the first two numbers.",
+      "output": "Fibonacci = [0, 1]"
+    },
+    {
+      "explanation": "For n > 1, continue adding numbers to the list. The next Fibonacci number is the sum of the last two numbers in the list.",
+      "output": "For i from 2 to n-1, do: Fibonacci[i] = Fibonacci[i-1] + Fibonacci[i-2]."
+    },
+    {
+      "explanation": "Return the list of Fibonacci numbers up to n.",
+      "output": "Return Fibonacci."
+    }
+  ]
+}

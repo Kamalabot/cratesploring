@@ -1,5 +1,5 @@
 [workspace]
 
-members = [ "openai100","openai101"]
+members = [ "openai100","openai101", "openai102", "openai103", "openai104"]
 
 resolver = "2"
