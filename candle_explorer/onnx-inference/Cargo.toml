@@ -1,0 +1,10 @@
+[package]
+name = "onnx-inference"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+candle-core = "0.7.2"
+candle-nn = "0.7.2"
+candle-onnx = "0.7.2"
+clap = { version = "4.5.19", features = ["derive"] }
