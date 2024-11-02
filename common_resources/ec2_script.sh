@@ -28,7 +28,7 @@ blacklist nvidiafb
 blacklist rivatv
 EOF
 echo "blacklist entries added"
-echo 'GRUB_CMDLINE_LINUX="rdblacklist=nouveau"' >> /etc/default/grub
+sudo echo 'GRUB_CMDLINE_LINUX="rdblacklist=nouveau"' >> /etc/default/grub
 sudo update-grub
 echo "updated grub"
 echo "Update .bashrc file"
