@@ -47,12 +47,12 @@ sudo echo 'export PATH="$PATH:/home/ubuntu/.local/bin"' >> ~/.bashrc
 sudo echo 'alias cls="clear"' >> ~/.bashrc
 source ~/.bashrc
 echo "Lvim Install completed"
-echo "Installing Surreal DB completed"
-curl -sSf https://install.surrealdb.com | sh
-echo "Installing Vnc & Ubuntu Desktop"
-sudo apt-get install -y lightdm ubuntu-desktop
-sudo apt install -y tightvncserver
-sudo apt install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
-echo "Desktop installed, now Configure the vnc server xstartup"
-echo "visit https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-nvidia-driver.html for next steps"
-vncserver :1
+# echo "Installing Surreal DB completed"
+# curl -sSf https://install.surrealdb.com | sh
+# echo "Installing Vnc & Ubuntu Desktop"
+# sudo apt-get install -y lightdm ubuntu-desktop
+# sudo apt install -y tightvncserver
+# sudo apt install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
+# echo "Desktop installed, now Configure the vnc server xstartup"
+# echo "visit https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-nvidia-driver.html for next steps"
+# vncserver :1
