@@ -1,10 +1,12 @@
 #!/bin/bash
 
 sudo apt update -y && sudo apt upgrade -y
-sudo apt install -y build-essential pkg-config 
-sudo apt install - y unzip npm python3-pip fontconfig python3.12-venv xclip xsel
-sudo apt install -y openssl libssl-dev libavformat-dev libavfilter-dev libavdevice-dev ffmpeg tesseract-ocr libtesseract-dev libasound2-dev cmake libxcb1-dev
-sudo apt install -y libclang-dev librocksdb-dev awscli python3-pip
+sudo apt install -y build-essential pkg-config \
+  unzip npm python3-pip fontconfig python3.12-venv xclip xsel \
+  openssl libssl-dev libavformat-dev libavfilter-dev libavdevice-dev \
+  ffmpeg tesseract-ocr libtesseract-dev libasound2-dev cmake libxcb1-dev
+  libclang-dev librocksdb-dev awscli python3-pip libfuse2 docker.io \
+  python3.10-venv
 echo "adding additional libraries including awscli"
 sudo apt-get upgrade -y linux-aws
 sudo apt-get install -y linux-headers-$(uname -r)
@@ -41,7 +43,6 @@ echo "installing lvim"
 wget https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.sh
 sudo chmod +x install.sh
 source ~/.bashrc
-sudo apt install -y libfuse2 
 ./install.sh -y
 sudo echo 'export PATH="$PATH:/home/ubuntu/.local/bin"' >> ~/.bashrc
 sudo echo 'alias cls="clear"' >> ~/.bashrc
